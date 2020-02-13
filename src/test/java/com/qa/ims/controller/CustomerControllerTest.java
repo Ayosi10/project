@@ -37,20 +37,20 @@ public class CustomerControllerTest {
 	public void readAllTest() {
 		CustomerController customerController = new CustomerController(customerServices);
 		List<Customer> customers = new ArrayList<>();
-		customers.add(new Customer("Chris", "P"));
-		customers.add(new Customer("Rhys", "T"));
-		customers.add(new Customer("Nic", "J"));
+		customers.add(new Customer("Mason", "Mount"));
+		customers.add(new Customer("Tammy", "Abraham"));
+		customers.add(new Customer("Lionel", "Messi"));
 		Mockito.when(customerServices.readAll()).thenReturn(customers);
 		assertEquals(customers, customerController.readAll());
 	}
 
 	@Test
 	public void createTest() {
-		String firstName = "Chris";
-		String surname = "Perrins";
-		Mockito.doReturn(firstName, surname).when(customerController).getInput();
-		Customer customer = new Customer(firstName, surname);
-		Customer savedCustomer = new Customer(1L, "Chris", "Perrins");
+		String firstname = "Jon ";
+		String surname = "Jones";
+		Mockito.doReturn(firstname, surname).when(customerController).getInput();
+		Customer customer = new Customer(firstname, surname);
+		Customer savedCustomer = new Customer(1L, "Jon", "Jones");
 		Mockito.when(customerServices.create(customer)).thenReturn(savedCustomer);
 		assertEquals(savedCustomer, customerController.create());
 	}
@@ -61,8 +61,8 @@ public class CustomerControllerTest {
 	@Test
 	public void updateTest() {
 		String id = "1";
-		String firstName = "Rhys";
-		String surname = "Thompson";
+		String firstName = "Michael";
+		String surname = "Jordon";
 		Mockito.doReturn(id, firstName, surname).when(customerController).getInput();
 		Customer customer = new Customer(1L, firstName, surname);
 		Mockito.when(customerServices.update(customer)).thenReturn(customer);

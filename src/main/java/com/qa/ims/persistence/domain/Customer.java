@@ -4,17 +4,17 @@ public class Customer {
 
 	private Long id;
 	private String firstName;
-	private String surname;
+	private String lastname;
 
-	public Customer(String firstName, String surname) {
+	public Customer(String firstName, String lastname) {
 		this.firstName = firstName;
-		this.surname = surname;
+		this.lastname = lastname;
 	}
 
-	public Customer(Long id, String firstName, String surname) {
+	public Customer(Long id, String firstName, String lastname) {
 		this.id = id;
 		this.firstName = firstName;
-		this.surname = surname;
+		this.lastname = lastname;
 	}
 
 	public Long getId() {
@@ -33,16 +33,16 @@ public class Customer {
 		this.firstName = firstName;
 	}
 
-	public String getSurname() {
-		return surname;
+	public String getLastName() {
+		return lastname;
 	}
 
-	public void setSurname(String surname) {
-		this.surname = surname;
+	public void setLastName(String lastname) {
+		this.lastname = lastname;
 	}
 
 	public String toString() {
-		return "id:" + id + " first name:" + firstName + " surname:" + surname;
+		return "id:" + id + " first name:" + firstName + " lastname:" + lastname;
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class Customer {
 		int result = 1;
 		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((surname == null) ? 0 : surname.hashCode());
+		result = prime * result + ((lastname == null) ? 0 : lastname.hashCode());
 		return result;
 	}
 
@@ -74,10 +74,10 @@ public class Customer {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		if (surname == null) {
-			if (other.surname != null)
+		if (lastname == null) {
+			if (other.lastname != null)
 				return false;
-		} else if (!surname.equals(other.surname))
+		} else if (!lastname.equals(other.lastname))
 			return false;
 		return true;
 	}

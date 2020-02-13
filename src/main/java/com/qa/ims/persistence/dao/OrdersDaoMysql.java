@@ -10,34 +10,37 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.mysql.cj.x.protobuf.MysqlxCrud.Order;
 import com.qa.ims.persistence.domain.Customer;
 import com.qa.ims.persistence.domain.Games;
+import com.qa.ims.persistence.domain.Orders;
 
-public class CustomerDaoMysql implements Dao<Customer> {
+public class OrdersDaoMysql implements Dao<Orders> {
 
-	public static final Logger LOGGER = Logger.getLogger(CustomerDaoMysql.class);
+	public static final Logger LOGGER = Logger.getLogger(OrdersDaoMysql.class);
 
 	private String jdbcConnectionUrl;
 	private String username;
 	private String password;
 
-	public CustomerDaoMysql(String username, String password) {
+	public OrdersDaoMysql(String username, String password) {
 		this.jdbcConnectionUrl = "jdbc:mysql://35.246.123.129:3306/ims";
 		this.username = username;
 		this.password = password;
 	}
 
-	public CustomerDaoMysql(String jdbcConnectionUrl, String username, String password) {
+	public OrdersDaoMysql(String jdbcConnectionUrl, String username, String password) {
 		this.jdbcConnectionUrl = jdbcConnectionUrl;
 		this.username = username;
 		this.password = password;
 	}
 
-	Customer customerFromResultSet(ResultSet resultSet) throws SQLException {
-		Long id = resultSet.getLong("id");
-		String firstname = resultSet.getString("firstname");
-		String lastname = resultSet.getString("lastname");
-		return new Customer(id, firstname, lastname);
+	Orders ordersFromResultSet(ResultSet resultSet) throws SQLException {
+		Long orders_id = resultSet.getLong("Orders_id");
+		Long customer_id = resultSet.getLong("Customer_id");
+		Long totalcost = resultSet.getLong("totalcost");
+		Long number_of_games = resultSet.getLong("number_of_games");
+		return new Orders(orders_id, customer_id, totalcost, number_of_games);
 	}
 
 	/**
@@ -46,16 +49,18 @@ public class CustomerDaoMysql implements Dao<Customer> {
 	 * @return A list of customers
 	 */
 	@Override
-	public List<Customer> readAll() {
+	public List<Orders> readAll() {
 		try (Connection connection = DriverManager.getConnection(jdbcConnectionUrl, username, password);
 				Statement statement = connection.createStatement();
-				ResultSet resultSet = statement.executeQuery("select * from Customers");) {
-			ArrayList<Customer> customers = new ArrayList<>();
+				ResultSet resultSet = statement.executeQuery("select * from Orders");) {
+			ArrayList<Orders> orders = new ArrayList<>();
 			while (resultSet.next()) {
-				customers.add(customerFromResultSet(resultSet));
+				orders.add(ordersFromResultSet(resultSet));
 			}
-			return customers;
+			return orders;
 		} catch (SQLException e) {
+			LOGGER.debug(e.getStackTrace());
+			LOGGER.error(e.getMessage());
 		}
 		return new ArrayList<>();
 	}
@@ -67,27 +72,18 @@ public class CustomerDaoMysql implements Dao<Customer> {
 	 * @param customer - takes in a customer object. id will be ignored
 	 */
 	@Override
-	public Customer create(Customer customer) {
+	public Orders create(Orders order) {
 		try (Connection connection = DriverManager.getConnection(jdbcConnectionUrl, username, password);
 				Statement statement = connection.createStatement();) {
-			statement.executeUpdate("insert into Customers(firstname, lastname) values('" + customer.getFirstName()
-					+ "','" + customer.getLastName() + "')");
+			statement.executeUpdate("insert into Orders (customer_id, totalcost, number_of_games) values('" + order.getCustomer_Id()
+					+ "','" + order.getTotalCost() + "', '" + order.getNumber_of_Games() + "')");
+		} catch (Exception e) {
+			LOGGER.debug(e.getStackTrace());
+			LOGGER.error(e.getMessage());
+		}
+		return null;
+	}
 	
-		} catch (Exception e) {
-		}
-		return null;
-	}
-
-	public Customer readCustomer(Long id) {
-		try (Connection connection = DriverManager.getConnection(jdbcConnectionUrl, username, password);
-				Statement statement = connection.createStatement();
-				ResultSet resultSet = statement.executeQuery("SELECT * Customers where id = " + id);) {
-			resultSet.next();
-			return customerFromResultSet(resultSet);
-		} catch (Exception e) {
-		}
-		return null;
-	}
 
 	/**
 	 * Updates a customer in the database
@@ -97,12 +93,11 @@ public class CustomerDaoMysql implements Dao<Customer> {
 	 * @return
 	 */
 	@Override
-	public Customer update(Customer customer) {
+	public Orders update(Orders order) {
 		try (Connection connection = DriverManager.getConnection(jdbcConnectionUrl, username, password);
 				Statement statement = connection.createStatement();) {
-			statement.executeUpdate("UPDATE Customers SET firstname ='" + customer.getFirstName() + "', lastname ='"
-					+ customer.getLastName() + "' where id =" + customer.getId());
-			return readCustomer(customer.getId());
+			statement.executeUpdate("UPDATE Orders SET customer_id ='" + order.getCustomer_Id() + "', totalcost ='"
+					+ order.getTotalCost() + "', number_of_games ='" + order.getNumber_of_Games() + "' where orders_id =" + order.getOrders_Id());
 		} catch (Exception e) {
 		}
 		return null;
@@ -114,13 +109,14 @@ public class CustomerDaoMysql implements Dao<Customer> {
 	 * @param id - id of the customer
 	 */
 	@Override
-	public void delete(long id) {
+	public void delete(long orders_id) {
 		try (Connection connection = DriverManager.getConnection(jdbcConnectionUrl, username, password);
 				Statement statement = connection.createStatement();) {
-			statement.executeUpdate("delete from Customers where id = " + id);
+			statement.executeUpdate("delete from Orders where orders_id = " + orders_id);
 		} catch (Exception e) {
+			LOGGER.debug(e.getStackTrace());
+			LOGGER.error(e.getMessage());
 		}
-	
-
 	}
+
 }
